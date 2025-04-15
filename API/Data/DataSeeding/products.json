@@ -1,0 +1,40 @@
+[
+  {
+    "Description": "Descripción de producto actualizado.",
+    "Price": 1723,
+    "Quantity": 3,
+    "CategoryId": 2,
+    "BrandId": 1,
+    "Name": "Producto actualizado",
+    "ImageUrl": "https://i.imgur.com/QkIa5tT.jpeg"
+  },
+  {
+    "Description": "Descripción de producto actualizado.",
+    "Price": 1723,
+    "Quantity": 3,
+    "CategoryId": 1,
+    "BrandId": 3,
+    "Name": "Producto actualizado",
+    "ImageUrl": "https://i.imgur.com/QkIa5tT.jpeg"
+  },
+  {
+    "Description": "Descripción de producto actualizado.",
+    "Price": 1723,
+    "Quantity": 3,
+    "CategoryId": 3,
+    "BrandId": 4,
+    "Name": "Producto actualizado",
+    "ImageUrl": "https://i.imgur.com/QkIa5tT.jpeg"
+  },
+  {
+    "Description": "Descripción de producto actualizado.",
+    "Price": 1723,
+    "Quantity": 3,
+    "CategoryId": 4,
+    "BrandId": 2,
+    "Name": "Producto actualizado",
+    "ImageUrl": "https://i.imgur.com/QkIa5tT.jpeg"
+  }
+
+]
+
