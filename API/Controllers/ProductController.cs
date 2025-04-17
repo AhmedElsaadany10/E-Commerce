@@ -1,4 +1,6 @@
 ﻿using API.Dtos;
+using API.Exetentions;
+using API.Helpers;
 using API.Models;
 using API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -19,20 +21,29 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductDto>>> GetProducts()
+        public async Task<ActionResult<PagedResult<ProductDto>>> GetProducts([FromQuery] PaginationParams _params)
         {
-            var products=await _productRepository.GetAllAsync();
-            return products.Select(p => new ProductDto {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Quantity = p.Quantity,
-                ImageUrl = string.IsNullOrEmpty(p.ImageUrl) ? $"{_config["ApiUrl"]}Images/Products/124.png":p.ImageUrl,
-                ProductImages = p.ProductImages.Select(x => x.Url).ToList(),
-                Brand = p.Brand.Name,
-                Category = p.Category.Name
-            }).ToList();
+            var products= _productRepository.GetAllAsync();
+            var pagedResult= await PaginationHelperExtention.CreatePagedResult(products,_params);
+            var productDto = new PagedResult<ProductDto>
+            {
+                Items = pagedResult.Items.Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Quantity = p.Quantity,
+                    ImageUrl = string.IsNullOrEmpty(p.ImageUrl) ? $"{_config["ApiUrl"]}Images/Products/124.png" : p.ImageUrl,
+                    ProductImages = p.ProductImages.Select(x => x.Url).ToList(),
+                    Brand = p.Brand.Name,
+                    Category = p.Category.Name
+                }).ToList(),
+                TotalCount = pagedResult.TotalCount,
+                PageNumber = pagedResult.PageNumber,
+                PageSize = pagedResult.PageSize,
+            };
+            return Ok(productDto);
         }
         [HttpGet ("{id}")]
         public async Task<ActionResult<ProductDto>> GetProduct(int id) {

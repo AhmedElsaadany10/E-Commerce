@@ -23,13 +23,16 @@ namespace API.Repositories.Services
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<List<Product>> GetAllAsync()
+        // we used IQueryable to apply filtering, sorting,
+        // and pagination on the database side efficiently before executing the query
+        public IQueryable<Product> GetAllAsync()
         {
-            return await _context.Products
+            return  _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
                 .Include (p => p.ProductImages)
-                .ToListAsync();
+                .AsQueryable(); 
+            // ToListAsync()  used with IEnumrable  
         }
     }
 }
