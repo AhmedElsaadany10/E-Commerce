@@ -1,10 +1,10 @@
 using Infrastructure.Data;
 using Infrastructure.Data.DataSeeding;
 using API.Middleware;
-using API.Repositories.Interfaces;
-using API.Repositories.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Core.Interfaces;
+using Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

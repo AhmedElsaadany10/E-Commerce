@@ -1,7 +1,6 @@
 ﻿
-using API.Repositories.Interfaces;
-using API.Repositories.Services;
 using Core.Entities;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,10 +1,9 @@
-﻿
-using API.Repositories.Interfaces;
+﻿using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Repositories.Services
+namespace Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {

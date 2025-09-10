@@ -1,6 +1,6 @@
 ﻿using Core.Entities;
 
-namespace API.Repositories.Interfaces
+namespace Core.Interfaces
 {
     public interface IBrandRepository
     {

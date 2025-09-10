@@ -1,7 +1,7 @@
 ﻿using API.Dtos;
 using API.Exetentions;
 using API.Helpers;
-using API.Repositories.Interfaces;
+using Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

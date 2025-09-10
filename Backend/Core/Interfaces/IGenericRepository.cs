@@ -1,5 +1,5 @@
 ﻿
-namespace API.Repositories.Interfaces
+namespace Core.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {

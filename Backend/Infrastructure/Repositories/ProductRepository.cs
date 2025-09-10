@@ -1,11 +1,10 @@
-﻿
-using API.Repositories.Interfaces;
-using Core.Entities;
+﻿using Core.Entities;
+using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Repositories.Services
+namespace Infrastructure.Repositories
 {
     public class ProductRepository : IProductRepository
     {
@@ -28,11 +27,11 @@ namespace API.Repositories.Services
         // and pagination on the database side efficiently before executing the query
         public IQueryable<Product> GetAllAsync()
         {
-            return  _context.Products
+            return _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include (p => p.ProductImages)
-                .AsQueryable(); 
+                .Include(p => p.ProductImages)
+                .AsQueryable();
             // ToListAsync()  used with IEnumrable  
         }
     }

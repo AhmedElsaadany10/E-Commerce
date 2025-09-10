@@ -1,11 +1,10 @@
-﻿
-using API.Repositories.Interfaces;
-using Core.Entities;
+﻿using Core.Entities;
+using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Repositories.Services
+namespace Infrastructure.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
@@ -20,12 +19,12 @@ namespace API.Repositories.Services
             return await _context.Categories.ToListAsync();
         }
 
-        
+
         public async Task<Category> GetByIdAsync(int id)
         {
             return await _context.Categories.FindAsync(id);
         }
 
-      
+
     }
 }
