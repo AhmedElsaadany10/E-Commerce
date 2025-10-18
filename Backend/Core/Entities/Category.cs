@@ -1,6 +1,6 @@
 ﻿namespace Core.Entities
 {
-    public class Category:BaseModel
+    public class Category:BaseEntity
     {
 
     }

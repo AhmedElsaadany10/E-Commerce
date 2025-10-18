@@ -1,6 +1,6 @@
 ﻿namespace Core.Entities
 {
-    public class Brand:BaseModel
+    public class Brand:BaseEntity
     {
 
     }

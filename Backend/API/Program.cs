@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using Core.Interfaces;
 using Infrastructure.Repositories;
+using API.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-//builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 var app = builder.Build();
 
