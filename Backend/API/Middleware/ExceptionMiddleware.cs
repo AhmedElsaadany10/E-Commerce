@@ -23,20 +23,22 @@ namespace API.Middleware
             
             _environment = environment;
         }
-        public async Task InvokeAsync(HttpContext httpContext){
+        public async Task InvokeAsync(HttpContext Context){
             try{
-                await _next(httpContext);
+                await _next(Context);
             }catch(Exception ex){
                 _logger.LogError(ex,ex.Message);
-                httpContext.Response.ContentType="application/json";
-                httpContext.Response.StatusCode=(int) HttpStatusCode.InternalServerError;
+               Context.Response.ContentType="application/json";
+                Context.Response.StatusCode=(int) HttpStatusCode.InternalServerError;
 
                 var response=_environment.IsDevelopment()
-                    ? new ApiException((int)HttpStatusCode.InternalServerError, ex.Message,ex.StackTrace?.ToString())
-                    :new ApiException((int)HttpStatusCode.InternalServerError);
+                    ? new ApiException((int)HttpStatusCode.InternalServerError,
+                    ex.Message,
+                    ex.StackTrace ?? ex.InnerException?.StackTrace ?? "No stack trace available")
+                    : new ApiException((int)HttpStatusCode.InternalServerError);
 
                     var json=System.Text.Json.JsonSerializer.Serialize(response);
-                    await httpContext.Response.WriteAsync(json);
+                    await Context.Response.WriteAsync(json);
             }
         }
     } 

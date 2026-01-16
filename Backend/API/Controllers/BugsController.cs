@@ -19,7 +19,7 @@ namespace API.Controllers
             var data=_context.Products.Find(-1);
             if(data == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404));
             }
             return Ok(data);
         }
@@ -30,10 +30,11 @@ namespace API.Controllers
             return data.ToString();
         }
         [HttpGet("bad-reqeust")]
-        public ActionResult<string> BadRequest()
+        public ActionResult<string> GetBadRequest()
         {
-            return BadRequest();
+            return BadRequest(new ApiResponse(400));
         }
+    }
       
     }
-}
+

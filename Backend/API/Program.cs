@@ -6,6 +6,9 @@ using System;
 using Core.Interfaces;
 using Infrastructure.Repositories;
 using API.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using API.Controllers;
+using API.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,12 +21,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<IBrandRepository, BrandRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+// this Function  has all Services;
+builder.Services.AddAppServices();
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
