@@ -1,0 +1,92 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm border-bottom">
+  <div class="container-fluid">
+
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
+      <svg width="40" height="32" role="img" aria-label="Brand Logo">
+        <use xlink:href="#brand-logo"></use>
+      </svg>
+      <span class="fw-bold fs-4">BrandName</span>
+    </a>
+
+    <!-- Mobile toggle -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar content -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+
+      <!-- Navigation -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-2">
+        <li class="nav-item" *ngFor="let item of navItems">
+          <a
+            class="nav-link"
+            [routerLink]="item.link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            {{ item.label }}
+          </a>
+        </li>
+      </ul>
+
+      <!-- Search -->
+      <form class="d-flex me-lg-3 mb-2 mb-lg-0" (ngSubmit)="onSearch($event)">
+        <input
+          class="form-control form-control-sm rounded-pill"
+          type="search"
+          placeholder="Search products..."
+          aria-label="Search">
+      </form>
+
+      <!-- Actions -->
+      <div class="d-flex align-items-center gap-2">
+
+        <!-- Cart -->
+<button class="btn btn-dark position-relative" (click)="toggleCart()" aria-label="Shopping Cart">
+
+    <i class="fa-solid fa-cart-shopping"></i>
+
+    <span *ngIf="cartItems > 0" class="cart-badge">
+        {{ cartItems }}
+    </span>
+</button>
+
+        <!-- Auth -->
+        <ng-container *ngIf="!isLoggedIn; else userMenu">
+          <button class="btn btn-outline-light btn-sm" (click)="login()">Login</button>
+          <button class="btn btn-primary btn-sm" (click)="signUp()">Sign Up</button>
+        </ng-container>
+
+        <!-- User dropdown -->
+        <ng-template #userMenu>
+          <div class="dropdown">
+            <button
+              class="btn user-avatar dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-label="User menu">
+              {{ userInitials }}
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
+              <li><a class="dropdown-item" routerLink="/orders">My Orders</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button class="dropdown-item" (click)="logout()">Logout</button>
+              </li>
+            </ul>
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+  </div>
+</nav>

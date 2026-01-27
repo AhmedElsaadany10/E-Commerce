@@ -28,6 +28,17 @@ namespace API.Extentions
                     return new BadRequestObjectResult(errorResponse);
                 }
             );
+            Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular",
+                    policy =>
+                    {
+                        policy
+                            .WithOrigins("http://localhost:4200")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
             return Services;
         }
 

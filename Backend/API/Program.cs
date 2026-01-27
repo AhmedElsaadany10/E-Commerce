@@ -42,7 +42,7 @@ app.UseStaticFiles();
 
 app.UseAuthorization();
 
-
+app.UseCors("AllowAngular");
 app.MapControllers();
 
 //seed data
