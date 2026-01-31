@@ -10,7 +10,6 @@ import { Product } from './shared/interfaces/Product';
 })
 export class AppComponent implements OnInit{
   title = 'E-Commerce';
-  products:Product[]=[];
 
   constructor(private http:HttpClient){}
   ngOnInit(): void {

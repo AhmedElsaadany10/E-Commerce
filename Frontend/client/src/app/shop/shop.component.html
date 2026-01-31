@@ -1,181 +1,212 @@
-<div>
-    <ul>
-        <li *ngFor="let product of products">
-            {{product.name}}
-        </li>
-    </ul>
-</div>
+<div class="container-fluid py-4">
+  <!-- Header with Search & Controls -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="row align-items-center g-3">
+            <div class="col-lg-3">
+              <h1 class="h3 mb-0">Our Products</h1>
+              <p class="text-muted mb-0">{{filteredProducts.length}} products found</p>
+            </div>
+            <div class="col-lg-5">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="search" 
+                       class="form-control border-start-0"
+                       placeholder="Search products..."
+                       [(ngModel)]="searchTerm"
+                       (ngModelChange)="onSearchChange()"
+                       aria-label="Search products">
+                <button *ngIf="searchTerm" 
+                        class="btn btn-light border"
+                        type="button"
+                        (click)="clearSearch()">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="d-flex gap-3 justify-content-lg-end">
+                <div class="dropdown">
+                  <button class="btn btn-outline-secondary dropdown-toggle" 
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false">
+                    <i class="bi bi-sort-down me-2"></i>
+                    Sort: {{getSortLabel()}}
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let option of sortOptions">
+                      <a class="dropdown-item" 
+                         href="#"
+                         [class.active]="currentSort === option.value"
+                         (click)="sortProducts(option.value)">
+                        <i class="bi" [class]="option.icon"></i>
+                        {{option.label}}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-outline-secondary" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+                    <i class="bi bi-list"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
-                </div>
+          <!-- Filter Chips -->
+          <div *ngIf="activeFilters.length > 0" class="row mt-3">
+            <div class="col-12">
+              <div class="d-flex flex-wrap gap-2 align-items-center">
+                <span class="text-muted small">Active filters:</span>
+                <span *ngFor="let filter of activeFilters" class="badge bg-light text-dark border d-flex align-items-center gap-1">
+                  {{filter}}
+                  <button class="btn-close btn-close-sm" aria-label="Remove"></button>
+                </span>
+                <button class="btn btn-link btn-sm text-decoration-none" (click)="clearAllFilters()">Clear all</button>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
-                </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="row">
+    <!-- Sidebar Filters -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+        <div class="card-body">
+          <h6 class="card-title mb-3">Filters</h6>
+          
+          <!-- Category Filter -->
+          <div class="mb-4">
+            <h6 class="small fw-bold mb-2">Category</h6>
+            <div *ngFor="let category of categories" class="form-check">
+              <input class="form-check-input" 
+                     type="checkbox" 
+                     [id]="'category-' + category.id"
+                     [checked]="selectedCategories.includes(category.id)"
+                     (change)="toggleCategory(category.id)">
+              <label class="form-check-label small" [for]="'category-' + category.id">
+                {{category.name}} <span class="text-muted">({{category.count}})</span>
+              </label>
             </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
-                </div>
+          </div>
+
+          <!-- Price Range -->
+          <div class="mb-4">
+            <h6 class="small fw-bold mb-2">Price Range</h6>
+            <input type="range" class="form-range" min="0" max="1000" [(ngModel)]="maxPrice" (ngModelChange)="applyPriceFilter()">
+            <div class="d-flex justify-content-between">
+              <small class="text-muted">$0</small>
+              <small class="text-muted">${{maxPrice}}</small>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
-                </div>
+
+    <!-- Products Grid/List -->
+    <div class="col-lg-9">
+      <!-- Grid View -->
+      <div *ngIf="viewMode === 'grid'" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-4">
+        <div class="col" *ngFor="let product of filteredProducts">
+          <app-product-item [product]="product"
+                            (addToCartEvent)="onAddToCart($event)"
+                            (addToWishlistEvent)="onAddToWishlist($event)"
+                            (quickViewEvent)="onQuickView($event)">
+          </app-product-item>
+        </div>
+      </div>
+
+      <!-- List View -->
+      <div *ngIf="viewMode === 'list'" class="list-view">
+        <div class="card mb-3 border-0 shadow-sm" *ngFor="let product of filteredProducts">
+          <div class="row g-0">
+            <div class="col-md-3">
+              <img [src]="product.imageUrl" [alt]="product.name" class="img-fluid rounded-start h-100 object-fit-cover">
             </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
+            <div class="col-md-9">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h5 class="card-title">
+                      <a [routerLink]="['/product', product.id]" class="text-decoration-none text-dark">
+                        {{product.name}}
+                      </a>
+                    </h5>
+                    <p class="card-text text-secondary">{{product.description}}</p>
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                      <span class="h4 fw-bold text-primary">{{product.price | currency}}</span>
+                      <!-- Future: Rating display
+                      <div class="rating-stars">
+                        <i *ngFor="let star of [1,2,3,4,5]" class="bi"
+                           [class.bi-star-fill]="star <= product.rating"
+                           [class.bi-star]="star > product.rating"
+                           [class.text-warning]="star <= product.rating">
+                        </i>
+                      </div>
+                      -->
+                    </div>
+                  </div>
+                  <div class="col-md-4 d-flex flex-column justify-content-between">
+                    <div class="d-flex gap-2 mb-3">
+                      <button class="btn btn-primary flex-grow-1" (click)="onAddToCart(product)">
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                      </button>
+                      <button class="btn btn-outline-secondary" (click)="onAddToWishlist(product)">
+                        <i class="bi bi-heart"></i>
+                      </button>
+                    </div>
+                    <div class="text-end">
+                      <!-- Future: Free shipping -->
+                      <!-- <small class="text-success" *ngIf="product.freeShipping"> -->
+                      <small class="text-success">
+                        <i class="bi bi-truck"></i> Free Shipping
+                      </small>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="filteredProducts.length === 0" class="text-center py-5">
+        <i class="bi bi-search display-1 text-muted mb-3"></i>
+        <h4 class="mb-3">No products found</h4>
+        <p class="text-muted mb-4">Try adjusting your search or filter to find what you're looking for.</p>
+        <button class="btn btn-outline-primary" (click)="clearAllFilters()">Clear all filters</button>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="filteredProducts.length > 0 && totalPages > 1" class="d-flex justify-content-center mt-5">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" href="#" (click)="changePage(currentPage - 1)"><i class="bi bi-chevron-left"></i></a>
+            </li>
+            <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
+              <a class="page-link" href="#" (click)="changePage(page)">{{page}}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <a class="page-link" href="#" (click)="changePage(currentPage + 1)"><i class="bi bi-chevron-right"></i></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card shadow-sm"> <svg aria-label="Placeholder: Thumbnail" class="bd-placeholder-img card-img-top"
-                height="225" preserveAspectRatio="xMidYMid slice" role="img" width="100%"
-                xmlns="http://www.w3.org/2000/svg">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group"> <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> </div> <small
-                        class="text-body-secondary">9 mins</small>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>

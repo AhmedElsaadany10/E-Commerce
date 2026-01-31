@@ -1,0 +1,73 @@
+// Shop component styles
+.list-view {
+  .card {
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: translateX(5px);
+    }
+  }
+  
+  .img-fluid {
+    height: 200px;
+  }
+}
+
+.sticky-top {
+  z-index: 1020;
+}
+
+// Dropdown active state
+.dropdown-item.active {
+  background-color: #0d6efd;
+  color: white;
+}
+
+// View toggle buttons
+.btn-group .btn.active {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+// Filter chips
+.badge {
+  padding: 0.5rem 0.75rem;
+  
+  .btn-close {
+    font-size: 0.5rem;
+    padding: 0.25rem;
+  }
+}
+
+// Pagination
+.pagination {
+  .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+  
+  .page-link {
+    color: #0d6efd;
+    
+    &:hover {
+      background-color: #e9ecef;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  .d-flex.justify-content-lg-end {
+    justify-content: start !important;
+  }
+}
+
+// Product image placeholder
+.object-fit-cover {
+  object-fit: cover;
+}
