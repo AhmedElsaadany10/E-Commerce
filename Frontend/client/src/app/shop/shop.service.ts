@@ -6,7 +6,8 @@ import { Product } from '../shared/interfaces/Product';
   providedIn: 'root'
 })
 export class ShopService {
-baseUrl='https://localhost:7070/api/';
+//baseUrl='https://localhost:7070/api/';
+baseUrl='http://localhost:5053/api/';
   constructor(private http:HttpClient) { }
 
   getProducts(){
