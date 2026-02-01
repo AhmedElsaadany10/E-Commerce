@@ -98,7 +98,8 @@
                      [checked]="selectedCategories.includes(category.id)"
                      (change)="toggleCategory(category.id)">
               <label class="form-check-label small" [for]="'category-' + category.id">
-                {{category.name}} <span class="text-muted">({{category.count}})</span>
+                <!-- {{category.name}} <span class="text-muted">({{category.count}})</span> -->
+                {{category.name}} <span class="text-muted">(14)</span>
               </label>
             </div>
           </div>
@@ -106,7 +107,7 @@
           <!-- Price Range -->
           <div class="mb-4">
             <h6 class="small fw-bold mb-2">Price Range</h6>
-            <input type="range" class="form-range" min="0" max="1000" [(ngModel)]="maxPrice" (ngModelChange)="applyPriceFilter()">
+            <input type="range" class="form-range" min="0" max="5000" [(ngModel)]="maxPrice" (ngModelChange)="applyPriceFilter()">
             <div class="d-flex justify-content-between">
               <small class="text-muted">$0</small>
               <small class="text-muted">${{maxPrice}}</small>
@@ -133,9 +134,14 @@
       <div *ngIf="viewMode === 'list'" class="list-view">
         <div class="card mb-3 border-0 shadow-sm" *ngFor="let product of filteredProducts">
           <div class="row g-0">
-            <div class="col-md-3">
-              <img [src]="product.imageUrl" [alt]="product.name" class="img-fluid rounded-start h-100 object-fit-cover">
-            </div>
+            <!-- List View Image Column -->
+        <div class="col-md-3">
+          <!-- <img [src]="product.imageUrl" 
+              [alt]="product.name" 
+              class="img-fluid rounded-start h-100 object-fit-cover"
+              (error)="handleImageError($event)"> -->
+        </div>
+
             <div class="col-md-9">
               <div class="card-body">
                 <div class="row">
@@ -148,7 +154,8 @@
                     <p class="card-text text-secondary">{{product.description}}</p>
                     <div class="d-flex align-items-center gap-3 mb-3">
                       <span class="h4 fw-bold text-primary">{{product.price | currency}}</span>
-                      <!-- Future: Rating display
+                      <!-- Future: Rating display -->
+                      <!--
                       <div class="rating-stars">
                         <i *ngFor="let star of [1,2,3,4,5]" class="bi"
                            [class.bi-star-fill]="star <= product.rating"

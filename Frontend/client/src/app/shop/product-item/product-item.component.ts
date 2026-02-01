@@ -18,7 +18,7 @@ export class ProductItemComponent {
   // Fallback for broken images
   handleImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    img.src = 'assets/images/placeholder.jpg';
+    img.src = 'assets/images/placeholder.png';
   }
 
   // Add product to cart

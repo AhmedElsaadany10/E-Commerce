@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Product } from '../shared/interfaces/Product';
+import { Category } from '../shared/interfaces/Category';
+import { Brand } from '../shared/interfaces/Brand';
 
 @Injectable({
   providedIn: 'root'
@@ -12,5 +14,11 @@ baseUrl='http://localhost:5053/api/';
 
   getProducts(){
     return this.http.get<Product[]>(this.baseUrl+'products');
+  }
+    getCategories(){
+    return this.http.get<Category[]>(this.baseUrl+'Category');
+  } 
+   getBrands(){
+    return this.http.get<Brand[]>(this.baseUrl+'Brand');
   }
 }

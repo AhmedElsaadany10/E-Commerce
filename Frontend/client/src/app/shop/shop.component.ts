@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from '../shared/interfaces/Product';
 import { ShopService } from './shop.service';
+import { Brand } from '../shared/interfaces/Brand';
+import { Category } from '../shared/interfaces/Category';
 
 @Component({
   selector: 'app-shop',
   templateUrl: './shop.component.html',
   standalone: false,
-  styleUrl: './shop.component.scss'
+  styleUrls: ['./shop.component.scss']
 })
 export class ShopComponent implements OnInit {
   // products!:Product[];
@@ -19,6 +21,8 @@ export class ShopComponent implements OnInit {
   //   })
   // }
   products: Product[] = [];
+  brands: Brand[] = [];
+  categories: Category[] = [];
   filteredProducts: Product[] = [];
   searchTerm: string = '';
   currentSort: string = 'name_asc';
@@ -29,16 +33,16 @@ export class ShopComponent implements OnInit {
 
   // Filter variables
   selectedCategories: number[] = [];
-  maxPrice: number = 1000;
+  maxPrice: number = 5000;
   minRating: number = 0; // for future rating feature
   activeFilters: string[] = [];
 
-  categories = [
-    { id: 1, name: 'Electronics', count: 24 },
-    { id: 2, name: 'Fashion', count: 18 },
-    { id: 3, name: 'Home & Garden', count: 32 },
-    { id: 4, name: 'Sports', count: 15 }
-  ];
+  // categoriesList = [
+  //   { id: 1, name: 'Electronics', count: 24 },
+  //   { id: 2, name: 'Fashion', count: 18 },
+  //   { id: 3, name: 'Home & Garden', count: 32 },
+  //   { id: 4, name: 'Sports', count: 15 }
+  // ];
 
   sortOptions = [
     { label: 'Name: A-Z', value: 'name_asc', icon: 'bi-sort-alpha-down' },
@@ -54,7 +58,9 @@ export class ShopComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
-    this.applyFilters();
+    this.loadCategories();
+    this.loadBrands();
+   // this.applyFilters();
   }
 
   // Load products from service
@@ -66,7 +72,22 @@ export class ShopComponent implements OnInit {
       console.log(error);
     })
   }
-
+  loadBrands(): void {
+    this.shopService.getBrands().subscribe(resp=>{
+      this.brands=resp;
+      console.log(this.brands)
+    },error=>{
+      console.log(error);
+    })
+  }
+    loadCategories(): void {
+    this.shopService.getCategories().subscribe(resp=>{
+      this.categories=resp;
+      console.log(this.categories)
+    },error=>{
+      console.log(error);
+    })
+  }
   onSearchChange(): void {
     this.currentPage = 1;
     this.applyFilters();
@@ -110,7 +131,7 @@ export class ShopComponent implements OnInit {
   clearAllFilters(): void {
     this.searchTerm = '';
     this.selectedCategories = [];
-    this.maxPrice = 1000;
+    this.maxPrice = 5000;
     this.minRating = 0;
     this.currentSort = 'name_asc';
     this.applyFilters();
@@ -180,7 +201,7 @@ export class ShopComponent implements OnInit {
       ).filter(Boolean).join(', ');
       this.activeFilters.push(`Categories: ${categoryNames}`);
     }
-    if (this.maxPrice < 1000) this.activeFilters.push(`Max Price: $${this.maxPrice}`);
+    if (this.maxPrice < 5000) this.activeFilters.push(`Max Price: $${this.maxPrice}`);
     if (this.minRating > 0) this.activeFilters.push(`Min Rating: ${this.minRating} stars`);
   }
 
@@ -216,4 +237,8 @@ export class ShopComponent implements OnInit {
   onQuickView(product: Product): void {
     console.log('Quick view:', product);
   }
+  handleImageError(event: any) {
+  event.target.src = 'assets/images/placeholder.png'; 
+}
+
 }

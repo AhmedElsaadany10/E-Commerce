@@ -1,16 +1,18 @@
 <div class="card product-card h-100 shadow-sm border-0 hover-lift">
   <!-- Product Image with badges -->
   <div class="position-relative overflow-hidden">
-    <img [src]="product.imageUrl || 'assets/images/placeholder.jpg'" 
+    <!-- <img [src]="product.imageUrl || 'assets/images/placeholder.jpg'" 
          [alt]="product.name"
          class="card-img-top product-image"
-         (error)="handleImageError($event)">
+         (error)="handleImageError($event)"> -->
 
     <!-- Sale Badge -->
+    <!--
     <span *ngIf="product.discountPercent && product.discountPercent > 0" 
           class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill">
       SALE {{product.discountPercent}}%
     </span>
+    -->
 
     <!-- Out of Stock Overlay -->
     <div *ngIf="product.quantity === 0" 
@@ -56,6 +58,7 @@
     </p>
 
     <!-- Rating -->
+    <!--
     <div class="mb-3">
       <div class="d-flex align-items-center">
         <div class="rating-stars">
@@ -70,15 +73,18 @@
         <small class="text-muted ms-2">({{product.reviewCount || 0}})</small>
       </div>
     </div>
+    -->
 
     <!-- Price -->
     <div class="d-flex align-items-center justify-content-between mb-3">
       <div>
         <span class="h5 fw-bold text-primary">{{product.price | currency}}</span>
+        <!--
         <span *ngIf="product.productImages?.length && product.originalPrice" 
               class="text-muted text-decoration-line-through ms-2">
           {{product.originalPrice | currency}}
         </span>
+        -->
       </div>
       <span *ngIf="product.quantity > 0" 
             class="badge bg-success bg-opacity-10 text-success border border-success">
@@ -104,9 +110,11 @@
   </div>
 
   <!-- Footer -->
+  <!--
   <div *ngIf="product.freeShipping" class="card-footer bg-light border-0 pt-0">
     <small class="text-success">
       <i class="bi bi-truck"></i> Free Shipping
     </small>
   </div>
+  -->
 </div>
