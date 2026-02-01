@@ -1,10 +1,10 @@
 <div class="card product-card h-100 shadow-sm border-0 hover-lift">
   <!-- Product Image with badges -->
   <div class="position-relative overflow-hidden">
-    <!-- <img [src]="product.imageUrl || 'assets/images/placeholder.jpg'" 
+    <img [src]="product.imageUrl || 'assets/images/placeholder.jpg'" 
          [alt]="product.name"
          class="card-img-top product-image"
-         (error)="handleImageError($event)"> -->
+         (error)="handleImageError($event)">
 
     <!-- Sale Badge -->
     <!--
@@ -26,12 +26,16 @@
               (click)="toggleWishlist()"
               [class.text-danger]="product.isInWishlist"
               title="Add to wishlist">
-        <i class="bi" [class.bi-heart]="!product.isInWishlist" [class.bi-heart-fill]="product.isInWishlist"></i>
+        <!-- <i class="bi" [class.bi-heart]="!product.isInWishlist" [class.bi-heart-fill]="product.isInWishlist"></i> -->
+        <i class="fa-regular fa-heart" *ngIf="!product.isInWishlist"></i>
+        <i class="fa-solid fa-heart" *ngIf="product.isInWishlist"></i>
+
       </button>
       <button class="btn btn-light btn-sm rounded-circle shadow-sm"
+              routerLink="/shop/{{product.id}}"
               (click)="quickView()"
               title="Quick view">
-        <i class="bi bi-eye"></i>
+        <i class="fa-regular fa-eye"></i>
       </button>
     </div>
   </div>
@@ -45,7 +49,7 @@
 
     <!-- Product Name -->
     <h5 class="card-title product-title mb-2">
-      <a [routerLink]="['/product', product.id]" 
+      <a routerLink="/shop/{{product.id}}"
          class="text-decoration-none text-dark hover-primary">
         {{product.name}}
       </a>
@@ -69,6 +73,9 @@
              [class.text-warning]="star <= (product.rating || 0)"
              [class.text-secondary]="star > (product.rating || 0)">
           </i>
+          replace above icon to be below icon
+          <i class="fa-solid fa-star"></i>
+
         </div>
         <small class="text-muted ms-2">({{product.reviewCount || 0}})</small>
       </div>
@@ -98,13 +105,18 @@
               (click)="addToCart()"
               [disabled]="product.quantity === 0"
               [class.btn-success]="isInCart">
-        <i class="bi" [class.bi-cart-plus]="!isInCart" [class.bi-cart-check]="isInCart"></i>
+        <!-- <i class="bi" [class.bi-cart-plus]="!isInCart" [class.bi-cart-check]="isInCart"></i> -->
+        <i class="fa-solid fa-cart-plus" *ngIf="!isInCart"></i>
+      <i class="fa-solid fa-cart-shopping" *ngIf="isInCart"></i>
+
         {{isInCart ? 'In Cart' : 'Add to Cart'}}
       </button>
       <button class="btn btn-outline-secondary"
               (click)="compareProduct()"
               title="Compare">
-        <i class="bi bi-arrow-left-right"></i>
+        <!-- <i class="bi bi-arrow-left-right"></i> -->
+        <i class="fa-solid fa-right-left"></i>
+
       </button>
     </div>
   </div>

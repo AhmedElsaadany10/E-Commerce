@@ -8,12 +8,15 @@ import { Brand } from '../shared/interfaces/Brand';
   providedIn: 'root'
 })
 export class ShopService {
-//baseUrl='https://localhost:7070/api/';
-baseUrl='http://localhost:5053/api/';
+baseUrl='https://localhost:7070/api/';
+//baseUrl='http://localhost:5053/api/';
   constructor(private http:HttpClient) { }
 
   getProducts(){
     return this.http.get<Product[]>(this.baseUrl+'products');
+  }
+    getProduct(id:number){
+    return this.http.get<Product >(this.baseUrl+'product/'+id);
   }
     getCategories(){
     return this.http.get<Category[]>(this.baseUrl+'Category');

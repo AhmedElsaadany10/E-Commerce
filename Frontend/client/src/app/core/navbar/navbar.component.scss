@@ -1,5 +1,7 @@
 // Brand tweaks only
-
+.navbar {
+  z-index: 1025;
+}
 .navbar-brand {
   svg {
     fill: currentColor;

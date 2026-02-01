@@ -33,6 +33,7 @@ export class ShopComponent implements OnInit {
 
   // Filter variables
   selectedCategories: number[] = [];
+  selectedBrands: number[] = [];
   maxPrice: number = 5000;
   minRating: number = 0; // for future rating feature
   activeFilters: string[] = [];
@@ -67,6 +68,7 @@ export class ShopComponent implements OnInit {
   loadProducts(): void {
     this.shopService.getProducts().subscribe(resp=>{
       this.products=resp;
+      this.applyFilters();
       console.log(this.products)
     },error=>{
       console.log(error);
@@ -117,6 +119,17 @@ export class ShopComponent implements OnInit {
     }
     this.applyFilters();
   }
+  
+  toggleBrand(brandId: number): void {
+    const index = this.selectedBrands.indexOf(brandId);
+    if (index > -1) {
+      this.selectedBrands.splice(index, 1);
+    } else {
+      this.selectedBrands.push(brandId);
+    }
+    this.applyFilters();
+  }
+
 
   applyPriceFilter(): void {
     this.currentPage = 1;
@@ -131,6 +144,7 @@ export class ShopComponent implements OnInit {
   clearAllFilters(): void {
     this.searchTerm = '';
     this.selectedCategories = [];
+    this.selectedBrands = [];
     this.maxPrice = 5000;
     this.minRating = 0;
     this.currentSort = 'name_asc';
@@ -146,6 +160,7 @@ export class ShopComponent implements OnInit {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(term) ||
         product.description.toLowerCase().includes(term) ||
+        product.brand.toLowerCase().includes(term) ||
         product.category.toLowerCase().includes(term)
       );
     }
@@ -156,7 +171,12 @@ export class ShopComponent implements OnInit {
         this.selectedCategories.includes(this.categories.find(c => c.name === product.category)?.id!)
       );
     }
-
+  // Brand filter
+    if (this.selectedBrands.length > 0) {
+      filtered = filtered.filter(product =>
+        this.selectedBrands.includes(this.brands.find(c => c.name === product.brand)?.id!)
+      );
+    }
     // Price filter
     filtered = filtered.filter(product => product.price <= this.maxPrice);
 
@@ -200,6 +220,12 @@ export class ShopComponent implements OnInit {
         this.categories.find(c => c.id === id)?.name
       ).filter(Boolean).join(', ');
       this.activeFilters.push(`Categories: ${categoryNames}`);
+    }
+    if (this.selectedBrands.length > 0) {
+      const brandNames = this.selectedBrands.map(id =>
+        this.brands.find(c => c.id === id)?.name
+      ).filter(Boolean).join(', ');
+      this.activeFilters.push(`brands: ${brandNames}`);
     }
     if (this.maxPrice < 5000) this.activeFilters.push(`Max Price: $${this.maxPrice}`);
     if (this.minRating > 0) this.activeFilters.push(`Min Rating: ${this.minRating} stars`);
