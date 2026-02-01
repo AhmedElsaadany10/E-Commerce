@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ShopComponent } from './shop.component';
 import { ProductItemComponent } from './product-item/product-item.component';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { ProductDetailsComponent } from './product-details/product-details.component';
+ import { ProductDetailsComponent } from './product-details/product-details.component';
+import { ShopRoutingModule } from './shop-routing.module';
 
 
 
@@ -17,11 +17,7 @@ import { ProductDetailsComponent } from './product-details/product-details.compo
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule
-  ],
-  exports:[
-    ShopComponent,
-   // ProductItemComponent
+    ShopRoutingModule
   ]
 })
 export class ShopModule { }

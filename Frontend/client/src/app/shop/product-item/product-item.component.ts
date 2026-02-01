@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Product } from '../../shared/interfaces/Product';
 
 @Component({
@@ -7,7 +7,8 @@ import { Product } from '../../shared/interfaces/Product';
   standalone: false,
   styleUrls: ['./product-item.component.scss'] // fixed typo from styleUrl
 })
-export class ProductItemComponent {
+export class ProductItemComponent implements OnInit{
+ 
   @Input() product!: Product; // Input from parent component
   @Output() addToCartEvent = new EventEmitter<Product>();
   @Output() addToWishlistEvent = new EventEmitter<Product>();
@@ -16,9 +17,8 @@ export class ProductItemComponent {
   isInCart: boolean = false;
 
   // Fallback for broken images
-  handleImageError(event: Event): void {
-    const img = event.target as HTMLImageElement;
-    img.src = 'assets/images/placeholder.png';
+   ngOnInit(): void {
+    this.product.imageUrl = this.product.imageUrl || 'assets/images/placeholder.png';
   }
 
   // Add product to cart

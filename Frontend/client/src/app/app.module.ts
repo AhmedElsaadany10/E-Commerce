@@ -23,7 +23,6 @@ import { HomeModule } from './home/home.module';
     FormsModule,
     HttpClientModule,
     CoreModule,
-    ShopModule,
     HomeModule
     
 ],

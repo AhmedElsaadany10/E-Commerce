@@ -1,19 +1,219 @@
-.product-main-image {
-  max-height: 400px;
-  object-fit: contain;
+// Product Gallery Styles
+.product-gallery {
+  .main-image-container {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      
+      .product-main-image {
+        transform: scale(1.02);
+      }
+    }
+  }
+  
+  .product-main-image {
+    max-height: 400px;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+    cursor: zoom-in;
+  }
+  
+  .btn-light {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: #dee2e6;
+    
+    &:hover {
+      background-color: white;
+      border-color: #0d6efd;
+    }
+  }
 }
 
-.thumb-image {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: 0.3s;
+// Thumbnail Gallery
+.thumbnail-gallery {
+  .thumbnail-item {
+    .thumb-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      opacity: 0.6;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 0.8;
+        border-color: #adb5bd;
+      }
+      
+      &.active {
+        opacity: 1;
+        border-color: #0d6efd;
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+        transform: translateY(-2px);
+      }
+    }
+  }
 }
 
-.thumb-image:hover,
-.thumb-image.active {
-  opacity: 1;
-  border: 2px solid #0d6efd;
+// Product Info Styles
+.product-info {
+  .product-title {
+    font-size: 2rem;
+    line-height: 1.2;
+    color: #212529;
+    
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .product-description {
+    line-height: 1.6;
+    color: #6c757d;
+  }
+  
+  .price-section {
+    .display-6 {
+      font-weight: 800;
+      color: #0d6efd;
+    }
+    
+    .text-decoration-line-through {
+      opacity: 0.7;
+    }
+  }
+}
+
+// Quantity Selector
+.quantity-section {
+  .input-group {
+    border-radius: 8px;
+    overflow: hidden;
+    
+    .btn {
+      width: 45px;
+      background-color: #f8f9fa;
+      border-color: #dee2e6;
+      
+      &:hover:not(:disabled) {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+    
+    .form-control {
+      border-color: #dee2e6;
+      font-weight: 600;
+      font-size: 1.1rem;
+      
+      &:focus {
+        box-shadow: none;
+        border-color: #0d6efd;
+      }
+    }
+  }
+}
+
+// Action Buttons
+.action-buttons {
+  .btn {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    
+    &-primary {
+      background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+      border: none;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+    
+    &-outline-secondary {
+      &:hover {
+        border-color: #0d6efd;
+        color: #0d6efd;
+        transform: translateY(-1px);
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+// Additional Info
+.additional-info {
+  .fa-solid {
+    color: #0d6efd;
+  }
+}
+
+// Loading State
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .product-gallery {
+    .main-image-container {
+      min-height: 300px;
+      padding: 1rem;
+    }
+    
+    .product-main-image {
+      max-height: 250px;
+    }
+  }
+  
+  .thumbnail-gallery {
+    .thumb-image {
+      width: 60px;
+      height: 60px;
+    }
+  }
+  
+  .action-buttons {
+    .btn {
+      padding: 0.75rem;
+    }
+  }
+}
+
+// Badge Styles
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  
+  &.bg-success-subtle {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+  }
+  
+  &.bg-danger-subtle {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+  }
 }

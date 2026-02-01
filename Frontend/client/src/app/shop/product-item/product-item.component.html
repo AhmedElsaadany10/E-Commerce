@@ -1,10 +1,12 @@
 <div class="card product-card h-100 shadow-sm border-0 hover-lift">
   <!-- Product Image with badges -->
   <div class="position-relative overflow-hidden">
-    <img [src]="product.imageUrl || 'assets/images/placeholder.jpg'" 
+    <img #iconRef
+        [src]="product.imageUrl || 'assets/images/placeholder.jpg'" 
          [alt]="product.name"
          class="card-img-top product-image"
-         (error)="handleImageError($event)">
+         (error)="iconRef.src = product.imageUrl"
+         >
 
     <!-- Sale Badge -->
     <!--
