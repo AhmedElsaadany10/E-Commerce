@@ -1,28 +1,46 @@
-﻿
+﻿using API.Dtos;
+using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-   
-    public class CategoryController : BaseController
+    [Route("api/")]
+    [ApiController]
+    public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IGenericRepository<Category> _categoryRepo;
+        private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(
+            IGenericRepository<Category> categoryRepo,
+            IMapper mapper)
         {
-            _categoryRepository = categoryRepository;
+            _categoryRepo = categoryRepo;
+            _mapper = mapper;
         }
-        [HttpGet]
-        public async Task<ActionResult<List<Category>>> GetBrandsAsync()
+
+        [HttpGet("categories")]
+        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetCategories()
         {
-            return await _categoryRepository.GetAllAsync();
+            var spec = new Brands_CategoriesWithProductsSpec<Category>();
+            var categories = await _categoryRepo.ListAsync(spec);
+
+            return Ok(_mapper.Map<IReadOnlyList<Category>, IReadOnlyList<CategoryDto>>(categories));
         }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetBrandById(int id) { 
-        return await _categoryRepository.GetByIdAsync(id);
+
+        [HttpGet("category/{id}")]
+        public async Task<ActionResult<CategoryDto>> GetCategory(int id)
+        {
+            var spec = new Brands_CategoriesWithProductsSpec<Category>(id);
+            var category = await _categoryRepo.GetEntityWithSpec(spec);
+
+            if (category == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<Category, CategoryDto>(category));
         }
     }
 }

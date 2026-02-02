@@ -34,7 +34,7 @@
           <img  #iconRef
                 [src]="selectedImage"
                class="img-fluid product-main-image"
-                (error)="iconRef.src = product.imageUrl"
+                (error)="iconRef.src ='assets/images/placeholder.png'"
                [alt]="product.name"
                (click)="nextImage()">
           
@@ -62,7 +62,7 @@
                    class="img-thumbnail thumb-image cursor-pointer"
                    [class.active]="img === selectedImage"
                    (click)="changeImage(img, i)"
-                    (error)="iconRef.src = product.imageUrl"
+                (error)="iconRef.src ='assets/images/placeholder.png'"
                    [alt]="'Thumbnail ' + (i + 1)">
             </div>
           </div>

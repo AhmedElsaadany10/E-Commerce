@@ -16,8 +16,8 @@ interface TestResponse {
   styleUrls: ['./test-error.component.scss']
 })
 export class TestErrorComponent implements OnInit {
-  baseUrl: string = 'https://localhost:7070/api/';
-  // baseUrl: string = 'http://localhost:5053/api/';
+  //baseUrl: string = 'https://localhost:7070/api/';
+   baseUrl: string = 'http://localhost:5053/api/';
   
   isLoading: boolean = false;
   currentError: TestResponse | null = null;
@@ -235,9 +235,7 @@ export class TestErrorComponent implements OnInit {
     if (status >= 500) return 'danger';
     return 'info';
   }
-testToast() {
-  this.toastr.success('Toastr is working!', 'Success');
-}
+
   retryLastTest(): void { 
     if (this.testHistory.length > 0) {
       const lastTest = this.testHistory[0];

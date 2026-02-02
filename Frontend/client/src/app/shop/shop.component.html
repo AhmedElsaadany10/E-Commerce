@@ -38,7 +38,7 @@
                   <ul class="dropdown-menu dropdown-menu-end">
                     <li *ngFor="let option of sortOptions">
                       <a class="dropdown-item" href="#" [class.active]="currentSort === option.value"
-                        (click)="sortProducts(option.value)">
+                        (click)="sortProducts(option.value); $event.preventDefault()">
                         <!-- <i class="bi" [class]="option.icon"></i> -->
                         <i class="fa-solid fa-sort me-2"></i>
                         {{option.label}}
@@ -96,7 +96,7 @@
                 [checked]="selectedBrands.includes(brand.id)" (change)="toggleBrand(brand.id)">
               <label class="form-check-label small" [for]="'brand' + brand.id">
                 <!-- {{category.name}} <span class="text-muted">({{category.count}})</span> -->
-                {{brand.name}} <span class="text-muted">(14)</span>
+                {{brand.name}} <span class="text-muted">({{brand.productsCount}})</span>
               </label>
             </div>
           </div>
@@ -109,7 +109,7 @@
                 [checked]="selectedCategories.includes(category.id)" (change)="toggleCategory(category.id)">
               <label class="form-check-label small" [for]="'category-' + category.id">
                 <!-- {{category.name}} <span class="text-muted">({{category.count}})</span> -->
-                {{category.name}} <span class="text-muted">(14)</span>
+                {{category.name}} <span class="text-muted">({{category.productsCount}})</span>
               </label>
             </div>
           </div>
