@@ -8,8 +8,8 @@ import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
-import { ShopModule } from './shop/shop.module';
 import { HomeModule } from './home/home.module';
+import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,8 +23,14 @@ import { HomeModule } from './home/home.module';
     FormsModule,
     HttpClientModule,
     CoreModule,
-    HomeModule
-    
+    HomeModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      progressBar: true,
+      closeButton: true
+    })
 ],
   providers: [],
   bootstrap: [AppComponent]

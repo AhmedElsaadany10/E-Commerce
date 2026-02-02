@@ -16,9 +16,9 @@ export class NavbarComponent implements OnInit {
   navItems: NavItem[] = [
     { label: 'Home', link: '/', active: true },
     { label: 'Shop', link: '/shop' },
-    { label: 'Pricing', link: '/pricing' },
     { label: 'Contact', link: '/contact' },
-    { label: 'About', link: '/about' }
+    { label: 'About', link: '/about' },
+    { label: 'Errors', link: '/error' }
   ];
 
   constructor() { }

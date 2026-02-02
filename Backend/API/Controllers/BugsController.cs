@@ -29,7 +29,7 @@ namespace API.Controllers
             var data = _context.Products.Find(-1);
             return data.ToString();
         }
-        [HttpGet("bad-reqeust")]
+        [HttpGet("bad-request")]
         public ActionResult<string> GetBadRequest()
         {
             return BadRequest(new ApiResponse(400));

@@ -1,0 +1,230 @@
+<div class="container py-5">
+    <button class="btn btn-primary mt-3" (click)="testToast()">Show Test Toast</button>
+
+  <!-- Header -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 class="display-6 fw-bold mb-2">API Error Testing</h1>
+          <p class="text-muted mb-0">Test different HTTP error responses from your API endpoints</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary" (click)="retryLastTest()" [disabled]="testHistory.length === 0">
+            <i class="fa-solid fa-rotate-right me-2"></i>Retry Last
+          </button>
+          <button class="btn btn-outline-danger" (click)="clearHistory()" [disabled]="testHistory.length === 0">
+            <i class="fa-solid fa-trash me-2"></i>Clear History
+          </button>
+        </div>
+      </div>
+      
+      <!-- Environment Info -->
+      <div class="alert alert-info">
+        <div class="d-flex align-items-center">
+          <i class="fa-solid fa-circle-info fs-4 me-3"></i>
+          <div>
+            <strong>Base URL:</strong> <code class="ms-2">{{baseUrl}}</code>
+            <div class="text-muted small mt-1">Make sure your API server is running at this URL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+          <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="text-muted mb-0">Testing API endpoint...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Test Buttons Section -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pb-0 pt-4">
+          <h5 class="card-title fw-bold mb-0">
+            <i class="fa-solid fa-bug me-2 text-danger"></i>Test Error Types
+          </h5>
+        </div>
+        <div class="card-body">
+          <!-- Individual Test Buttons -->
+          <div class="row g-3 mb-4">
+            <div class="col-6" *ngFor="let errorType of errorTypes">
+              <button class="btn btn-outline-danger w-100 d-flex flex-column py-3"
+                      [class.disabled]="isLoading"
+                      (click)="errorType.method()">
+                <span class="fs-4 fw-bold mb-1">{{errorType.id}}</span>
+                <span class="small">{{errorType.name}}</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Quick Actions -->
+          <div class="border-top pt-4">
+            <div class="d-grid gap-2">
+              <button class="btn btn-danger btn-lg py-3"
+                      [disabled]="isLoading"
+                      (click)="testAllErrors()">
+                <i class="fa-solid fa-bolt me-2"></i>
+                Test All Errors
+              </button>
+              <button class="btn btn-outline-secondary"
+                      [disabled]="!currentError || isLoading"
+                      (click)="copyErrorToClipboard()">
+                <i class="fa-regular fa-clipboard me-2"></i>
+                Copy Error Details
+              </button>
+              <button class="btn btn-outline-secondary"
+                      [disabled]="!currentError || isLoading"
+                      (click)="clearCurrentError()">
+                <i class="fa-solid fa-xmark me-2"></i>
+                Clear Current Error
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Error Response Section -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between pb-0 pt-4">
+          <h5 class="card-title fw-bold mb-0">
+            <i class="fa-solid fa-activity me-2 text-primary"></i>Current Response
+          </h5>
+          <span *ngIf="errorType" class="badge rounded-pill" [ngClass]="'bg-' + getStatusColor(currentError?.status)">
+            {{errorType}}
+          </span>
+        </div>
+        <div class="card-body">
+          <div *ngIf="!currentError" class="text-center py-5">
+            <i class="bi bi-arrow-left-right display-1 text-muted mb-4"></i>
+            <h5 class="text-muted mb-3">No Response Yet</h5>
+            <p class="text-muted">Click any test button to see the API response</p>
+          </div>
+          
+          <div *ngIf="currentError" class="response-container">
+            <!-- Response Header -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+              <div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge" [ngClass]="'bg-' + getStatusColor(currentError.status)">
+                    HTTP {{currentError.status || 'N/A'}}
+                  </span>
+                  <small class="text-muted">
+                    <i class="fa-regular fa-clock me-1"></i>
+                    {{currentError.timestamp | date:'medium'}}
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Response Details -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Response Message</label>
+              <div class="alert" [ngClass]="'alert-' + getStatusColor(currentError.status)">
+                <i class="bi" [class.bi-check-circle]="currentError.status === 200" 
+                   [class.bi-exclamation-triangle]="currentError.status && currentError.status >= 400 && currentError.status < 500"
+                   [class.bi-x-circle]="currentError.status && currentError.status >= 500"
+                   [class.bi-info-circle]="!currentError.status"></i>
+                {{currentError.message || 'No message provided'}}
+              </div>
+            </div>
+
+            <!-- Full Response JSON -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <label class="form-label fw-semibold mb-0">Full Response</label>
+                <button class="btn btn-sm btn-outline-secondary" (click)="copyErrorToClipboard()">
+                  <i class="fa-regular fa-clipboard me-1"></i>Copy JSON
+                </button>
+              </div>
+              <pre class="response-json bg-light p-4 rounded-2">{{formatJson(currentError)}}</pre>
+            </div>
+
+            <!-- Errors Array (if exists) -->
+            <div *ngIf="currentError.errors" class="mb-4">
+              <label class="form-label fw-semibold">Validation Errors</label>
+              <div class="list-group">
+                <div *ngFor="let error of currentError.errors | keyvalue" class="list-group-item">
+                  <div class="d-flex justify-content-between">
+                    <strong class="text-danger">{{error.key}}</strong>
+                    <span>{{error.value}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test History -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between pb-0 pt-4">
+          <h5 class="card-title fw-bold mb-0">
+            <i class="fa-regular fa-clock-history me-2 text-secondary"></i>Test History
+            <span class="badge bg-secondary ms-2">{{testHistory.length}}</span>
+          </h5>
+          <small class="text-muted">Last 10 tests</small>
+        </div>
+        <div class="card-body">
+          <div *ngIf="testHistory.length === 0" class="text-center py-4">
+            <p class="text-muted mb-0">No tests performed yet</p>
+          </div>
+          
+          <div *ngIf="testHistory.length > 0" class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Message</th>
+                  <th>Timestamp</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let history of testHistory; let i = index">
+                  <td>
+                    <span class="badge bg-light text-dark">{{history.type}}</span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="'bg-' + getStatusColor(history.response.status)">
+                      {{history.response.status || 'N/A'}}
+                    </span>
+                  </td>
+                  <td class="text-truncate" style="max-width: 200px;" [title]="history.response.message">
+                    {{history.response.message || 'No message'}}
+                  </td>
+                  <td>
+                    <small class="text-muted">{{history.timestamp | date:'short'}}</small>
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" 
+                            (click)="currentError = history.response; errorType = history.type">
+                      <i class="fa-solid fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
