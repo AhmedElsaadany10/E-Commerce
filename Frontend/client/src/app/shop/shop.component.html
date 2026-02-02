@@ -117,10 +117,10 @@
           <!-- Price Range -->
           <div class="mb-4">
             <h6 class="small fw-bold mb-2">Price Range</h6>
-            <input type="range" class="form-range" min="0" max="5000" [(ngModel)]="maxPrice"
+            <input type="range" class="form-range"    [min]="minPrice" [max]="maxPrice"  [(ngModel)]="selectedMaxPrice"
               (ngModelChange)="applyPriceFilter()">
             <div class="d-flex justify-content-between">
-              <small class="text-muted">$0</small>
+              <small class="text-muted">${{minPrice}}</small>
               <small class="text-muted">${{maxPrice}}</small>
             </div>
           </div>

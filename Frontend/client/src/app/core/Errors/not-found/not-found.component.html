@@ -1,0 +1,34 @@
+<div class="d-flex flex-column justify-content-center align-items-center vh-90 text-center bg-gradient-light">
+  <div class="container py-4 px-3">
+    <!-- Error Code -->
+    <h1 class="display-1 fw-bold text-primary mb-3" style="font-size: 6rem;">
+      404
+    </h1>
+    
+    <!-- Main error message -->
+    <h2 class="h2 fw-semibold text-dark mb-3">Page Not Found</h2>
+    
+    <!-- Descriptive message -->
+    <p class="text-muted mb-4 max-w-md mx-auto">
+      The page you're looking for doesn't exist or may have been moved.
+    </p>
+    
+    <!-- Action buttons -->
+    <div class="d-flex flex-wrap gap-3 justify-content-center mb-4">
+      <a routerLink="/" class="btn btn-primary px-4">
+        <i class="bi bi-house-door me-2"></i>Return Home
+      </a>
+      <button class="btn btn-outline-secondary px-4" (click)="goBack()">
+        <i class="bi bi-arrow-left me-2"></i>Go Back
+      </button>
+    </div>
+    
+    <!-- Additional help - smaller and more subtle -->
+    <div class="mt-4 pt-3 border-top">
+      <p class="text-muted small mb-1">Need assistance?</p>
+      <a routerLink="/support" class="text-decoration-none small">
+        <i class="bi bi-question-circle me-1"></i>Contact Support
+      </a>
+    </div>
+  </div>
+</div>

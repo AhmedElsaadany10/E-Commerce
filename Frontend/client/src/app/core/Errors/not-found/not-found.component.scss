@@ -1,0 +1,26 @@
+.bg-gradient-light {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.max-w-md {
+  max-width: 420px;
+}
+
+/* 90% of viewport height instead of 100% */
+.vh-90 {
+  height: 90vh !important;
+}
+
+/* Responsive adjustments */
+@media (max-height: 600px) {
+  .vh-90 {
+    height: auto !important;
+    min-height: 90vh;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  
+  .display-1 {
+    font-size: 4rem !important;
+  }
+}

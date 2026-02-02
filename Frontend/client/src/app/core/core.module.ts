@@ -2,14 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from './navbar/navbar.component';
-import { TestErrorComponent } from './test-error/test-error.component';
+import { TestErrorComponent } from './Errors/test-error/test-error.component';
+import { NotFoundComponent } from './Errors/not-found/not-found.component';
+import { ServerErrorComponent } from './Errors/server-error/server-error.component';
 
 
 
 @NgModule({
   declarations: [
     NavbarComponent,
-    TestErrorComponent
+    TestErrorComponent,
+    NotFoundComponent,
+    ServerErrorComponent
   ],
   imports: [
     CommonModule,
@@ -18,6 +22,8 @@ import { TestErrorComponent } from './test-error/test-error.component';
   exports:[
     NavbarComponent,
     TestErrorComponent,
+    NotFoundComponent,
+    ServerErrorComponent
   ]
 })
 export class CoreModule { }

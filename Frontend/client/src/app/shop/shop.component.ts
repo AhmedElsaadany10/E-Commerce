@@ -34,7 +34,9 @@ export class ShopComponent implements OnInit {
   // Filter variables
   selectedCategories: number[] = [];
   selectedBrands: number[] = [];
-  maxPrice: number = 5000;
+  selectedMaxPrice: number = 10000;
+  maxPrice: number = 10000;
+  minPrice: number = 0;
   minRating: number = 0; // for future rating feature
   activeFilters: string[] = [];
 
@@ -65,15 +67,24 @@ export class ShopComponent implements OnInit {
   }
 
   // Load products from service
-  loadProducts(): void {
-    this.shopService.getProducts().subscribe(resp=>{
-      this.products=resp;
-      this.applyFilters();
-      console.log(this.products)
-    },error=>{
-      console.log(error);
-    })
-  }
+loadProducts(): void {
+  this.shopService.getProducts().subscribe(resp => {
+    this.products = resp;
+
+    // حساب أقل وأعلى سعر من المنتجات
+    if (this.products.length > 0) {
+      this.minPrice = Math.min(...this.products.map(p => p.price));
+      this.maxPrice = Math.max(...this.products.map(p => p.price));
+      this.selectedMaxPrice = this.maxPrice; // يبدأ على أقصى سعر
+    }
+
+    this.applyFilters();
+    console.log(this.products);
+  }, error => {
+    console.log(error);
+  });
+}
+
   loadBrands(): void {
     this.shopService.getBrands().subscribe(resp=>{
       this.brands=resp;
@@ -145,8 +156,10 @@ export class ShopComponent implements OnInit {
     this.searchTerm = '';
     this.selectedCategories = [];
     this.selectedBrands = [];
-    this.maxPrice = 5000;
-    this.minRating = 0;
+      if (this.products.length > 0) {
+      this.minPrice = Math.min(...this.products.map(p => p.price));
+      this.maxPrice = Math.max(...this.products.map(p => p.price));
+    }
     this.currentSort = 'name_asc';
     this.applyFilters();
   }
@@ -177,8 +190,8 @@ export class ShopComponent implements OnInit {
         this.selectedBrands.includes(this.brands.find(c => c.name === product.brand)?.id!)
       );
     }
-    // Price filter
-    filtered = filtered.filter(product => product.price <= this.maxPrice);
+  // Price filter
+  filtered = filtered.filter(product => product.price <= this.selectedMaxPrice);
 
     // Future: Rating filter (currently ignored)
     if (this.minRating > 0) {
