@@ -111,25 +111,25 @@ export class TestErrorComponent implements OnInit {
     this.saveToHistory(errorType, errorResponse);
     
     // Show appropriate toast notification
-    switch (error.status) {
-      case 400:
-        this.toastr.warning('Bad Request: Invalid parameters provided');
-        break;
-      case 401:
-        this.toastr.warning('Unauthorized: Authentication required');
-        break;
-      case 403:
-        this.toastr.warning('Forbidden: Insufficient permissions');
-        break;
-      case 404:
-        this.toastr.error('Not Found: Resource does not exist');
-        break;
-      case 500:
-        this.toastr.error('Server Error: Internal server issue');
-        break;
-      default:
-        this.toastr.error(`Error ${error.status}: ${error.message}`);
-    }
+    // switch (error.status) {
+    //   case 400:
+    //     this.toastr.warning('Bad Request: Invalid parameters provided');
+    //     break;
+    //   case 401:
+    //     this.toastr.warning('Unauthorized: Authentication required');
+    //     break;
+    //   case 403:
+    //     this.toastr.warning('Forbidden: Insufficient permissions');
+    //     break;
+    //   case 404:
+    //     this.toastr.error('Not Found: Resource does not exist');
+    //     break;
+    //   case 500:
+    //     this.toastr.error('Server Error: Internal server issue');
+    //     break;
+    //   default:
+    //     this.toastr.error(`Error ${error.status}: ${error.message}`);
+    // }
   }
 
   private handleSuccess(response: any, errorType: string): void {

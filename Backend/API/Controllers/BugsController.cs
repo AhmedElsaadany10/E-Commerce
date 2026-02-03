@@ -34,6 +34,11 @@ namespace API.Controllers
         {
             return BadRequest(new ApiResponse(400));
         }
+        [HttpGet("unauthorized")]
+        public ActionResult<string> GetUnauthorized()
+        {
+            return Unauthorized(new ApiResponse(401));
+        }
     }
       
     }

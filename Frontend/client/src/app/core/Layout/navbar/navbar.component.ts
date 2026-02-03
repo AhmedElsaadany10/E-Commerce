@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { NavItem } from '../../shared/interfaces/NavItem';
+import { NavItem } from '../../../shared/interfaces/NavItem';
 
 
 @Component({

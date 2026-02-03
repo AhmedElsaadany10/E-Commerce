@@ -28,7 +28,7 @@ export class ShopComponent implements OnInit {
   currentSort: string = 'name_asc';
   viewMode: 'grid' | 'list' = 'grid';
   currentPage: number = 1;
-  pageSize: number = 12;
+  pageSize: number = 9;
   totalPages: number = 1;
 
   // Filter variables

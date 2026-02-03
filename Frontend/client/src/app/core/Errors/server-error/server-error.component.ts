@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-server-error',
@@ -7,16 +8,19 @@ import { Component } from '@angular/core';
   styleUrl: './server-error.component.scss'
 })
 export class ServerErrorComponent {
-reloadPage() {
-  // Show loading state
-  const button = event?.target as HTMLElement;
-  const originalContent = button.innerHTML;
-  button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Retrying...';
-  button.setAttribute('disabled', 'true');
-  
-  // Reload after a brief delay for better UX
-  setTimeout(() => {
-    window.location.reload();
-  }, 500);
-}
+error: any;
+
+  constructor(private router: Router) {
+    const navigation = this.router.getCurrentNavigation();
+    this.error = navigation?.extras?.state?.['error'];
+  }
+
+  reloadPage(event: Event) {
+    const button = event.target as HTMLButtonElement;
+    button.innerHTML =
+      '<span class="spinner-border spinner-border-sm me-2"></span> Retrying...';
+    button.disabled = true;
+
+    setTimeout(() => window.location.reload(), 500);
+  }
 }
