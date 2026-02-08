@@ -9,6 +9,8 @@ using API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using API.Controllers;
 using API.Extentions;
+using StackExchange.Redis;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,15 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = ConfigurationOptions.Parse(
+        builder.Configuration.GetConnectionString("Redis"),
+        true
+    );
+    return ConnectionMultiplexer.Connect(configuration);
+});
+
 // this Function  has all Services;
 builder.Services.AddAppServices();
 builder.Services.AddAutoMapper(typeof(MappingProfiles));

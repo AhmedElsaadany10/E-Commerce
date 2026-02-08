@@ -1,5 +1,8 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { NavItem } from '../../../shared/interfaces/NavItem';
+import { CartService } from '../../../cart/cart.service';
+import { Observable } from 'rxjs';
+import { ICart } from '../../../shared/interfaces/Cart';
 
 
 @Component({
@@ -9,7 +12,7 @@ import { NavItem } from '../../../shared/interfaces/NavItem';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  cartItems: number = 3;
+  cartItems$!: Observable<ICart | null>;
   isLoggedIn: boolean = false;
   userInitials: string = 'JD';
   searchQuery: string = '';
@@ -21,9 +24,10 @@ export class NavbarComponent implements OnInit {
     { label: 'Errors', link: '/error' }
   ];
 
-  constructor() { }
+  constructor(private cartService:CartService) { }
 
   ngOnInit(): void {
+    this.cartItems$=this.cartService.cart$;
     // Initialize user state from auth service
     // this.isLoggedIn = this.authService.isLoggedIn();
   }

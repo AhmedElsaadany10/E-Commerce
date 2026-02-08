@@ -1,0 +1,185 @@
+<div class="container py-4 py-lg-5">
+  
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+          <h1 class="display-6 fw-bold mb-2">Shopping Cart</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a routerLink="/" class="text-decoration-none">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Cart</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="text-end">
+          <button class="btn btn-outline-danger" 
+                  *ngIf="(cart$ | async)?.items?.length"
+                  (click)="clearAll()"
+                  [disabled]="isLoading">
+            <i class="fas fa-trash-alt me-2"></i>Clear All
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="(cart$ | async)?.items?.length === 0">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center py-5">
+        <i class="fas fa-shopping-cart display-1 text-muted mb-4"></i>
+        <h3 class="fw-bold mb-3">Your cart is empty</h3>
+        <p class="text-muted mb-4">Add some products to get started</p>
+        <a routerLink="/shop" class="btn btn-primary btn-lg px-5">
+          <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Content -->
+  <div *ngIf="(cart$ | async) as cart">
+    <div class="row g-4">
+      
+      <!-- Cart Items -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header bg-white border-0 py-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="form-check mb-0">
+                <input class="form-check-input" 
+                       type="checkbox" 
+                       id="selectAll"
+                       [checked]="isAllSelected(cart.items)"
+                       (change)="toggleSelectAll(cart.items)">
+                <label class="form-check-label fw-semibold ms-2" for="selectAll">
+                  Select All ({{cart.items.length}} items)
+                </label>
+              </div>
+              <span class="text-muted">
+                {{getCartItemCount(cart.items)}} items total
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+              <div *ngFor="let item of cart.items" class="list-group-item border-0 p-4">
+                <div class="row align-items-center">
+                  
+                  <!-- Selection -->
+                  <div class="col-auto">
+                    <div class="form-check">
+                      <input class="form-check-input" 
+                             type="checkbox"
+                             [id]="'item-' + item.id"
+                             [checked]="selectedItems.has(item.id)"
+                             (change)="toggleItemSelection(item.id, cart.items)">
+                    </div>
+                  </div>
+
+                  <!-- Image -->
+                  <div class="col-auto">
+                    <img [src]="item.imageUrl" 
+                         [alt]="item.productName"
+                         class="cart-item-image rounded"
+                         (error)="item.imageUrl='assets/images/placeholder.png'">
+                  </div>
+
+                  <!-- Details -->
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <h6 class="fw-semibold mb-1">{{item.productName}}</h6>
+                      <small class="text-muted mb-2">
+                        <span class="badge bg-light text-dark border me-2">{{item.category}}</span>
+                        <span class="badge bg-light text-dark border">{{item.brand}}</span>
+                      </small>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="text-primary fw-bold">
+                          {{item.price | currency:'USD':'symbol':'1.2-2'}}
+                        </span>
+                        <small class="text-muted">each</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Quantity -->
+                  <div class="col-auto">
+                    <div class="d-flex align-items-center gap-2">
+                      <button class="btn btn-outline-secondary btn-sm"
+                              (click)="decrement(item)"
+                              [disabled]="item.quantity <= 1">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <span class="fw-semibold mx-2">{{item.quantity}}</span>
+                      <button class="btn btn-outline-secondary btn-sm"
+                              (click)="increment(item)">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                    <small class="text-muted d-block text-center mt-1">
+                      Total: {{getItemTotal(item) | currency:'USD':'symbol':'1.2-2'}}
+                    </small>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="col-auto">
+                    <div class="d-flex flex-column gap-2">
+                      <button class="btn btn-link text-danger p-0"
+                              (click)="remove(item)"
+                              title="Remove item">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                      <button class="btn btn-link text-secondary p-0"
+                              (click)="moveToWishlist(item)"
+                              title="Move to wishlist">
+                        <i class="fas fa-heart"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Continue Shopping -->
+        <div class="d-flex justify-content-between align-items-center">
+          <a routerLink="/shop" class="text-decoration-none">
+            <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+          </a>
+          <div class="text-muted">
+            <i class="fas fa-info-circle me-1"></i>
+            {{cart.items.length}} products • {{getCartItemCount(cart.items)}} items
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="col-lg-4">
+        <div class="sticky-top" style="top: 20px;">
+          <app-order-totals></app-order-totals>
+          
+          <!-- Checkout Button -->
+          <button class="btn btn-primary btn-lg w-100 py-3 mt-4"
+                  (click)="proceedToCheckout()"
+                  [disabled]="selectedCount === 0">
+            <i class="fas fa-lock me-2"></i>
+            Proceed to Checkout
+            <span *ngIf="selectedCount > 0" class="ms-2">({{selectedCount}})</span>
+          </button>
+          
+          <!-- Security Info -->
+          <div class="text-center mt-3">
+            <small class="text-muted">
+              <i class="fas fa-shield-alt text-success me-1"></i>
+              Secure checkout
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

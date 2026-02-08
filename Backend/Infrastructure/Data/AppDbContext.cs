@@ -36,6 +36,10 @@ namespace Infrastructure.Data
                 .WithMany(p => p.ProductImages)
                 .HasForeignKey(pi => pi.ProductId)
                 .OnDelete(DeleteBehavior.Restrict); // منع الحذف التلقائي للـ Products
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasPrecision(18, 2);
         }
     }
 }

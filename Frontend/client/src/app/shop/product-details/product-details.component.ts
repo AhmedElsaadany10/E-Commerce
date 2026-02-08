@@ -3,6 +3,8 @@ import { Product } from '../../shared/interfaces/Product';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShopService } from '../shop.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { CartService } from '../../cart/cart.service';
+import { CartItem } from '../../shared/interfaces/CartItem';
 
 @Component({
   selector: 'app-product-details',
@@ -11,24 +13,25 @@ import { BreadcrumbService } from 'xng-breadcrumb';
   styleUrl: './product-details.component.scss'
 })
 export class ProductDetailsComponent implements OnInit {
-  product!: Product;
+   product!: Product;
   selectedImage!: string;
   quantity: number = 1;
   isAddingToCart: boolean = false;
   currentImageIndex: number = 0;
-  relatedProducts: Product[] = [];
+  
+  // Cart data
+  existingCartItem: CartItem | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private shopService: ShopService,
-    private bcService: BreadcrumbService
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
     this.loadProduct();
-    this.bcService.set('@productDetails', this.product.name);
-
+    this.checkCartStatus();
   }
 
   private loadProduct(): void {
@@ -38,50 +41,41 @@ export class ProductDetailsComponent implements OnInit {
       next: (res) => {
         this.product = res;
         this.processProductImages();
-        this.loadRelatedProducts();
+        this.checkCartStatus();
       },
-      error: (error) => {
-        console.error('Product not found:', error);
+      error: () => {
         this.router.navigate(['/shop']);
       }
     });
   }
 
+  private checkCartStatus(): void {
+    const cart = this.cartService.getCurrentCartValue();
+    if (cart && this.product) {
+      this.existingCartItem = cart.items.find(item => item.id === this.product.id) || null;
+      if (this.existingCartItem) {
+        this.quantity = this.existingCartItem.quantity;
+      }
+    }
+  }
+
   private processProductImages(): void {
     const images = this.product.productImages || [];
-    this.product.imageUrl = this.product.imageUrl || 'assets/images/placeholder.png';
-    // Add main image if not already in the array
+    
     if (!images.includes(this.product.imageUrl)) {
       this.product.productImages = [this.product.imageUrl, ...images];
     } else {
       this.product.productImages = images;
     }
     
-    // Set initial selected image
-    this.selectedImage = this.product.productImages[0];
+    this.selectedImage = this.product.productImages[0] || this.product.imageUrl;
     this.currentImageIndex = 0;
   }
 
-  private loadRelatedProducts(): void {
-    // Load related products based on category
-    // this.shopService.getProductsByCategory(this.product.category).subscribe({
-    //   next: (products) => {
-    //     // Filter out current product and limit to 4 items
-    //     this.relatedProducts = products
-    //       .filter(p => p.id !== this.product.id)
-    //       .slice(0, 4);
-    //   },
-    //   error: (error) => {
-    //     console.error('Failed to load related products:', error);
-    //   }
-    // });
-  }
-
+  // Image Methods
   changeImage(img: string, index?: number): void {
     this.selectedImage = img;
-    if (index !== undefined) {
-      this.currentImageIndex = index;
-    }
+    if (index !== undefined) this.currentImageIndex = index;
   }
 
   nextImage(): void {
@@ -98,63 +92,79 @@ export class ProductDetailsComponent implements OnInit {
     this.selectedImage = this.product.productImages[this.currentImageIndex];
   }
 
+  // QUANTITY METHODS - NO VALIDATION, JUST CALL SERVICE
   increaseQuantity(): void {
-    if (this.quantity < this.product.quantity) {
+    if (this.existingCartItem) {
+      // Use cart service - it handles all validation
+      this.cartService.incrementQuantity(this.existingCartItem);
+    } else {
+      // Just increase local quantity
       this.quantity++;
     }
   }
 
   decreaseQuantity(): void {
-    if (this.quantity > 1) {
-      this.quantity--;
+    if (this.existingCartItem) {
+      // Use cart service - it handles all validation (including removal if needed)
+      this.cartService.decrementQuantity(this.existingCartItem);
+    } else {
+      // Just decrease local quantity
+      if (this.quantity > 1) this.quantity--;
     }
   }
 
   validateQuantity(): void {
-    if (this.quantity < 1) {
+    // Basic UI validation only
+    if (this.quantity < 1) this.quantity = 1;
+  }
+
+  // CART METHODS - NO VALIDATION, JUST CALL SERVICE
+  addToCart(): void {
+    if (this.isAddingToCart) return;
+
+    this.isAddingToCart = true;
+
+    // Cart service handles ALL validation (stock, etc.)
+    this.cartService.addItemToCart(this.product, this.quantity);
+
+    setTimeout(() => {
+      this.isAddingToCart = false;
+      this.checkCartStatus();
+    }, 500);
+  }
+
+  removeFromCart(): void {
+    if (this.existingCartItem) {
+      // Cart service handles everything
+      this.cartService.removeItem(this.existingCartItem);
       this.quantity = 1;
     }
-    if (this.quantity > this.product.quantity) {
-      this.quantity = this.product.quantity;
-    }
   }
 
-  addToCart(): void {
-    if (this.product.quantity === 0) return;
-    
-    this.isAddingToCart = true;
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Added to cart:', {
-        ...this.product,
-        quantity: this.quantity,
-        totalPrice: this.product.price * this.quantity
-      });
-      
-      // Show success message (you can implement a toast service)
-      alert(`${this.product.name} added to cart!`);
-      
-      this.isAddingToCart = false;
-    }, 1000);
+  // Helper Methods
+  get cartButtonText(): string {
+    return this.existingCartItem ? 'Update Cart' : 'Add to Cart';
   }
 
+  get totalPrice(): number {
+    return this.product.price * this.quantity;
+  }
+
+  get isStockLow(): boolean {
+    return this.product.countInStock <= 5 && this.product.countInStock > 0;
+  }
+
+  get isOutOfStock(): boolean {
+    return this.product.countInStock === 0;
+  }
+
+  // Other Actions
   toggleWishlist(): void {
     this.product.isInWishlist = !this.product.isInWishlist;
-    const message = this.product.isInWishlist 
-      ? 'Added to wishlist!' 
-      : 'Removed from wishlist';
-    
-    // Show feedback
-    console.log(message);
-    
-    // You can implement wishlist service here
-    // this.wishlistService.toggleWishlist(this.product.id);
   }
 
   compareProduct(): void {
     console.log('Compare product:', this.product);
-    // Implement comparison logic
   }
 
   shareProduct(): void {
@@ -165,12 +175,9 @@ export class ProductDetailsComponent implements OnInit {
         url: window.location.href
       });
     } else {
-      // Fallback: Copy to clipboard
       navigator.clipboard.writeText(window.location.href)
-        .then(() => alert('Link copied to clipboard!'))
-        .catch(() => alert('Failed to copy link'));
+        .then(() => console.log('Link copied'))
+        .catch(() => console.log('Failed to copy'));
     }
   }
-
-
 }

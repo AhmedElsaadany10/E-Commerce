@@ -50,14 +50,14 @@
       <div class="d-flex align-items-center gap-2">
 
         <!-- Cart -->
-<button class="btn btn-dark position-relative" (click)="toggleCart()" aria-label="Shopping Cart">
+<a class="btn btn-dark position-relative" routerLink="/cart" aria-label="Shopping Cart">
 
     <i class="fa-solid fa-cart-shopping"></i>
 
-    <span *ngIf="cartItems > 0" class="cart-badge">
-        {{ cartItems }}
+    <span *ngIf="(cartItems$ | async)as cart" class="cart-badge">
+        {{ cart.items.length }}
     </span>
-</button>
+  </a>
 
         <!-- Auth -->
         <ng-container *ngIf="!isLoggedIn; else userMenu">

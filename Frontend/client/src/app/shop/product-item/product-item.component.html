@@ -2,7 +2,7 @@
   <!-- Product Image with badges -->
   <div class="position-relative overflow-hidden">
     <img #iconRef
-        [src]="product.imageUrl || 'assets/images/placeholder.jpg'" 
+        [src]="product.imageUrl" 
          [alt]="product.name"
          class="card-img-top product-image"
          (error)="iconRef.src ='assets/images/placeholder.png'"
@@ -17,7 +17,7 @@
     -->
 
     <!-- Out of Stock Overlay -->
-    <div *ngIf="product.quantity === 0" 
+    <div *ngIf="product.countInStock === 0" 
          class="position-absolute top-0 bottom-0 start-0 end-0 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center">
       <span class="text-white fw-bold">OUT OF STOCK</span>
     </div>
@@ -95,7 +95,7 @@
         </span>
         -->
       </div>
-      <span *ngIf="product.quantity > 0" 
+      <span *ngIf="product.countInStock > 0" 
             class="badge bg-success bg-opacity-10 text-success border border-success">
         In Stock
       </span>
@@ -105,7 +105,7 @@
     <div class="d-flex gap-2 mt-auto">
       <button class="btn btn-primary flex-grow-1"
               (click)="addToCart()"
-              [disabled]="product.quantity === 0"
+              [disabled]="product.countInStock === 0"
               [class.btn-success]="isInCart">
         <!-- <i class="bi" [class.bi-cart-plus]="!isInCart" [class.bi-cart-check]="isInCart"></i> -->
         <i class="fa-solid fa-cart-plus" *ngIf="!isInCart"></i>

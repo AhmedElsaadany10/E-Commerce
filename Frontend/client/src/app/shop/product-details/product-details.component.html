@@ -1,6 +1,4 @@
 <div class="container py-4 py-lg-5" *ngIf="product; else loading">
- 
-
   <div class="row g-4 g-lg-5">
     
     <!-- Product Gallery -->
@@ -8,15 +6,22 @@
       <div class="product-gallery">
         <!-- Main Image Container -->
         <div class="main-image-container border rounded-3 bg-light p-3 mb-4 text-center position-relative">
-          <!-- Image Badges -->
+          
+          <!-- Low Stock Badge -->
           <div class="position-absolute top-0 start-0 m-3">
-            <span *ngIf="product.quantity <= 5 && product.quantity > 0" 
-                  class="badge bg-warning text-dark">
+            <span *ngIf="isStockLow" class="badge bg-warning text-dark">
               Low Stock
             </span>
           </div>
           
-          <!-- Wishlist Quick Action -->
+          <!-- Cart Status Badge -->
+          <div *ngIf="existingCartItem" class="position-absolute top-0 start-0 m-3" style="margin-top: 50px !important;">
+            <span class="badge bg-success">
+              In Cart
+            </span>
+          </div>
+          
+          <!-- Wishlist Button -->
           <button class="btn btn-light btn-sm rounded-circle position-absolute top-0 end-0 m-3 shadow-sm"
                   (click)="toggleWishlist()"
                   [title]="product.isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'">
@@ -24,14 +29,14 @@
           </button>
           
           <!-- Main Product Image -->
-          <img  #iconRef
-                [src]="selectedImage"
+          <img #mainImage
+               [src]="selectedImage"
                class="img-fluid product-main-image"
-                (error)="iconRef.src ='assets/images/placeholder.png'"
+               (error)="mainImage.src = 'assets/images/placeholder.png'"
                [alt]="product.name"
                (click)="nextImage()">
           
-          <!-- Image Navigation Arrows (if multiple images) -->
+          <!-- Image Navigation -->
           <button *ngIf="product.productImages && product.productImages.length > 1"
                   class="btn btn-light btn-sm rounded-circle position-absolute top-50 start-0 translate-middle-y ms-3 shadow-sm"
                   (click)="prevImage()">
@@ -50,21 +55,15 @@
           <div class="d-flex flex-wrap justify-content-center gap-3">
             <div *ngFor="let img of product.productImages; let i = index"
                  class="thumbnail-item">
-              <img #iconRef
-                [src]="img"
+              <img #thumbnail
+                   [src]="img"
                    class="img-thumbnail thumb-image cursor-pointer"
                    [class.active]="img === selectedImage"
                    (click)="changeImage(img, i)"
-                (error)="iconRef.src ='assets/images/placeholder.png'"
+                   (error)="thumbnail.src = 'assets/images/placeholder.png'"
                    [alt]="'Thumbnail ' + (i + 1)">
             </div>
           </div>
-        </div>
-        
-        <!-- Single Image Indicator -->
-        <div *ngIf="!(product.productImages && product.productImages.length > 1)" 
-             class="text-center text-muted small mt-2">
-          <i class="fa-solid fa-image me-1"></i> 1 image available
         </div>
       </div>
     </div>
@@ -79,10 +78,9 @@
           </span>
           
           <span class="badge px-3 py-2"
-                [ngClass]="product.quantity > 0 ? 'bg-success-subtle text-success-emphasis border border-success' : 'bg-danger-subtle text-danger-emphasis border border-danger'">
-            <i class="fa-solid me-1" [class.fa-check-circle]="product.quantity > 0" [class.fa-times-circle]="product.quantity === 0"></i>
-            {{product.quantity > 0 ? 'In Stock' : 'Out of Stock'}}
-            <span *ngIf="product.quantity > 0" class="ms-1">({{product.quantity}} available)</span>
+                [ngClass]="!isOutOfStock ? 'bg-success-subtle text-success-emphasis border border-success' : 'bg-danger-subtle text-danger-emphasis border border-danger'">
+            <i class="fa-solid me-1" [class.fa-check-circle]="!isOutOfStock" [class.fa-times-circle]="isOutOfStock"></i>
+            {{!isOutOfStock ? 'In Stock' : 'Out of Stock'}}
           </span>
         </div>
 
@@ -105,9 +103,6 @@
               {{product.originalPrice | currency:'USD':'symbol':'1.2-2'}}
             </span>
           </div>
-          <small class="text-muted d-block mt-1">
-            <i class="fa-solid fa-info-circle me-1"></i> All prices include VAT
-          </small>
         </div>
 
         <hr class="my-4">
@@ -120,110 +115,66 @@
               <button class="btn btn-outline-secondary" 
                       type="button"
                       (click)="decreaseQuantity()"
-                      [disabled]="quantity <= 1">
+                      [disabled]="quantity <= 1 || isOutOfStock">
                 <i class="fa-solid fa-minus"></i>
               </button>
               <input type="number" 
                      class="form-control text-center border-secondary"
                      [(ngModel)]="quantity"
                      min="1"
-                     [max]="product.quantity"
-                     (change)="validateQuantity()">
+                     (change)="validateQuantity()"
+                     [disabled]="isOutOfStock">
               <button class="btn btn-outline-secondary" 
                       type="button"
                       (click)="increaseQuantity()"
-                      [disabled]="quantity >= product.quantity">
+                      [disabled]="isOutOfStock">
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
             <small class="text-muted">
-              Max {{product.quantity}} per order
+              {{product.countInStock}} available
             </small>
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <div class="d-grid gap-3">
-            <!-- Add to Cart Button -->
+        <!-- Cart Actions -->
+        <div class="cart-actions mb-4">
+          <div class="d-grid gap-2">
+            <!-- Add/Update Cart Button -->
             <button class="btn btn-primary btn-lg py-3 fw-semibold"
-                    [disabled]="product.quantity === 0 || isAddingToCart"
+                    [disabled]="isOutOfStock || isAddingToCart"
                     (click)="addToCart()">
               <span *ngIf="!isAddingToCart; else addingSpinner">
-                <i class="fa-solid fa-cart-plus me-2"></i>
-                Add to Cart - {{(product.price * quantity) | currency:'USD':'symbol':'1.2-2'}}
+                <i class="fa-solid" [class.fa-cart-plus]="!existingCartItem" [class.fa-cart-arrow-down]="existingCartItem"></i>
+                {{cartButtonText}} - {{totalPrice | currency:'USD':'symbol':'1.2-2'}}
               </span>
               <ng-template #addingSpinner>
                 <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                Adding...
+                Processing...
               </ng-template>
             </button>
             
-            <!-- Secondary Actions -->
-            <div class="d-flex gap-3">
-              <button class="btn btn-outline-secondary flex-fill"
-                      (click)="compareProduct()"
-                      [disabled]="product.quantity === 0">
-                <i class="fa-solid fa-right-left me-2"></i>Compare
-              </button>
-              <button class="btn btn-outline-secondary flex-fill"
-                      (click)="shareProduct()">
-                <i class="fa-solid fa-share-alt me-2"></i>Share
-              </button>
-            </div>
+            <!-- Remove from Cart -->
+            <button *ngIf="existingCartItem"
+                    class="btn btn-outline-danger"
+                    (click)="removeFromCart()">
+              <i class="fa-solid fa-trash-can me-2"></i>
+              Remove from Cart
+            </button>
           </div>
         </div>
 
-        <!-- Additional Information -->
-        <div class="additional-info mt-5 pt-4 border-top">
-          <div class="row g-3">
-            <div class="col-6 col-md-4">
-              <div class="text-center">
-                <i class="fa-solid fa-shipping-fast text-primary fs-4 mb-2"></i>
-                <div>
-                  <small class="d-block fw-semibold">Fast Delivery</small>
-                  <small class="text-muted">1-3 days</small>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-md-4">
-              <div class="text-center">
-                <i class="fa-solid fa-undo text-primary fs-4 mb-2"></i>
-                <div>
-                  <small class="d-block fw-semibold">Easy Returns</small>
-                  <small class="text-muted">30 days</small>
-                </div>
-              </div>
-            </div>
-            <div class="col-12 col-md-4">
-              <div class="text-center">
-                <i class="fa-solid fa-headset text-primary fs-4 mb-2"></i>
-                <div>
-                  <small class="d-block fw-semibold">Support</small>
-                  <small class="text-muted">24/7</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Related Products Section -->
-  <div *ngIf="relatedProducts.length > 0" class="mt-5 pt-5 border-top">
-    <h3 class="fw-bold mb-4">You May Also Like</h3>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-      <div class="col" *ngFor="let relatedProduct of relatedProducts">
-        <!-- You can reuse your product-item component here -->
-        <div class="card h-100 border-0 shadow-sm">
-          <img [src]="relatedProduct.imageUrl" 
-               class="card-img-top" 
-               [alt]="relatedProduct.name"
-               style="height: 200px; object-fit: cover;">
-          <div class="card-body">
-            <h6 class="card-title">{{relatedProduct.name}}</h6>
-            <p class="card-text text-primary fw-bold mb-0">{{relatedProduct.price | currency}}</p>
+        <!-- Additional Actions -->
+        <div class="additional-actions mb-5">
+          <div class="d-flex gap-3">
+            <button class="btn btn-outline-secondary flex-fill"
+                    (click)="compareProduct()">
+              <i class="fa-solid fa-right-left me-2"></i>Compare
+            </button>
+            <button class="btn btn-outline-secondary flex-fill"
+                    (click)="shareProduct()">
+              <i class="fa-solid fa-share-alt me-2"></i>Share
+            </button>
           </div>
         </div>
       </div>

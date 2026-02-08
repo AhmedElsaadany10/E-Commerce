@@ -1,0 +1,49 @@
+<div *ngIf="(cartTotal$ | async) as total" class="card border-0 shadow-sm">
+  <div class="card-header bg-white border-0 py-3">
+    <h5 class="card-title fw-bold mb-0">Order Summary</h5>
+  </div>
+  
+  <div class="card-body">
+    <!-- Subtotal -->
+    <div class="d-flex justify-content-between mb-3">
+      <span class="text-muted">Subtotal</span>
+      <span class="fw-semibold">{{ total.subTotal | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+    
+    <!-- Shipping -->
+    <div class="d-flex justify-content-between mb-3">
+      <span class="text-muted">Shipping</span>
+      <span class="fw-semibold">{{ total.shipping | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+    
+    <hr class="my-3">
+    
+    <!-- Selected Items Section -->
+    <div *ngIf="(selectedTotal$ | async) as selectedTotal" class="mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted">Selected Items</span>
+        <span class="fw-semibold text-primary">{{ selectedTotal | currency:'USD':'symbol':'1.2-2' }}</span>
+      </div>
+      <div class="alert alert-info py-2 mb-0">
+        <small class="d-flex align-items-center">
+          <i class="fas fa-info-circle me-2"></i>
+          Only selected items will be purchased
+        </small>
+      </div>
+    </div>
+    
+    <!-- Final Total -->
+    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+      <span class="fw-bold fs-5">Total</span>
+      <span class="text-primary fw-bold fs-4">{{ total.total | currency:'USD':'symbol':'1.2-2' }}</span>
+    </div>
+    
+    <!-- Estimated Info -->
+    <div class="mt-3 pt-3 border-top">
+      <small class="text-muted">
+        <i class="fas fa-clock me-1"></i>
+        Estimated delivery: 3-5 business days
+      </small>
+    </div>
+  </div>
+</div>

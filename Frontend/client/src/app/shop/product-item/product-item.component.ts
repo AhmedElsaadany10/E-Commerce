@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Product } from '../../shared/interfaces/Product';
+import { CartService } from '../../cart/cart.service';
 
 @Component({
   selector: 'app-product-item',
@@ -16,15 +17,20 @@ export class ProductItemComponent implements OnInit{
 
   isInCart: boolean = false;
 
+  constructor(private cartService:CartService){}
   // Fallback for broken images
    ngOnInit(): void {
-    this.product.imageUrl = this.product.imageUrl || 'assets/images/placeholder.png';
+this.cartService.cart$.subscribe(cart => {
+    this.isInCart = !!cart?.items.find(i => i.id === this.product.id);
+  });
   }
 
   // Add product to cart
   addToCart(): void {
-    this.isInCart = true;
-    this.addToCartEvent.emit(this.product);
+    console.log('Total Quantity',this.product.countInStock)
+    //this.addToCartEvent.emit(this.product);
+    this.cartService.addItemToCart(this.product)
+
   }
 
   // Toggle wishlist (logic to implement)

@@ -1,7 +1,9 @@
 ﻿using API.Controllers;
 using Core.Interfaces;
+using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Extentions
 {
@@ -9,9 +11,12 @@ namespace API.Extentions
     {
         public static IServiceCollection AddAppServices(this IServiceCollection Services)
         {
+
+
             Services.AddScoped<IBrandRepository, BrandRepository>();
             Services.AddScoped<ICategoryRepository, CategoryRepository>();
             Services.AddScoped<IProductRepository, ProductRepository>();
+            Services.AddScoped<ICartRepository, CartRepository>();
             Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
             Services.Configure<ApiBehaviorOptions>(options =>
                 options.InvalidModelStateResponseFactory = actionContext =>
