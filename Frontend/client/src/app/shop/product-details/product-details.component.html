@@ -107,62 +107,53 @@
 
         <hr class="my-4">
 
-        <!-- Quantity Selector -->
-        <div class="quantity-section mb-4">
-          <label class="form-label fw-semibold d-block mb-2">Quantity:</label>
-          <div class="d-flex align-items-center gap-3">
-            <div class="input-group" style="width: 140px;">
-              <button class="btn btn-outline-secondary" 
-                      type="button"
-                      (click)="decreaseQuantity()"
-                      [disabled]="quantity <= 1 || isOutOfStock">
-                <i class="fa-solid fa-minus"></i>
-              </button>
-              <input type="number" 
-                     class="form-control text-center border-secondary"
-                     [(ngModel)]="quantity"
-                     min="1"
-                     (change)="validateQuantity()"
-                     [disabled]="isOutOfStock">
-              <button class="btn btn-outline-secondary" 
-                      type="button"
-                      (click)="increaseQuantity()"
-                      [disabled]="isOutOfStock">
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div>
-            <small class="text-muted">
-              {{product.countInStock}} available
-            </small>
-          </div>
-        </div>
+<!-- Quantity Selector -->
+<div class="quantity-section mb-4">
+  <label class="form-label fw-semibold d-block mb-2">Quantity:</label>
+  <div class="d-flex align-items-center gap-2">
+    <!-- Decrease -->
+    <button class="btn btn-outline-secondary btn-sm"
+            (click)="decreaseQuantity()"
+            [disabled]="quantity <= 1 || isOutOfStock">
+      <i class="fa-solid fa-minus"></i>
+    </button>
 
-        <!-- Cart Actions -->
-        <div class="cart-actions mb-4">
-          <div class="d-grid gap-2">
-            <!-- Add/Update Cart Button -->
-            <button class="btn btn-primary btn-lg py-3 fw-semibold"
-                    [disabled]="isOutOfStock || isAddingToCart"
-                    (click)="addToCart()">
-              <span *ngIf="!isAddingToCart; else addingSpinner">
-                <i class="fa-solid" [class.fa-cart-plus]="!existingCartItem" [class.fa-cart-arrow-down]="existingCartItem"></i>
-                {{cartButtonText}} - {{totalPrice | currency:'USD':'symbol':'1.2-2'}}
-              </span>
-              <ng-template #addingSpinner>
-                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                Processing...
-              </ng-template>
-            </button>
-            
-            <!-- Remove from Cart -->
-            <button *ngIf="existingCartItem"
-                    class="btn btn-outline-danger"
-                    (click)="removeFromCart()">
-              <i class="fa-solid fa-trash-can me-2"></i>
-              Remove from Cart
-            </button>
-          </div>
-        </div>
+    <!-- Quantity Display -->
+    <span class="fw-semibold mx-2">{{ quantity }}</span>
+
+    <!-- Increase -->
+    <button class="btn btn-outline-secondary btn-sm"
+            (click)="increaseQuantity()"
+            [disabled]="quantity >= product.countInStock || isOutOfStock">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+  </div>
+
+  <!-- Stock Info -->
+  <small class="text-muted d-block mt-1">
+    {{ product.countInStock }} available
+  </small>
+</div>
+
+<!-- Cart Actions -->
+<div class="cart-actions mb-4">
+  <div class="d-grid gap-2">
+    <!-- Total Price -->
+    <small class="text-muted d-block mt-2">
+      Total: {{ totalPrice | currency:'USD':'symbol':'1.2-2' }}
+    </small>
+
+    <!-- Remove from Cart -->
+    <button *ngIf="existingCartItem"
+          class="btn btn-outline-danger"
+          (click)="removeFromCart()">
+    <i class="fa-solid fa-trash-can me-2"></i>
+    Remove from Cart
+  </button>
+
+  </div>
+</div>
+
 
         <!-- Additional Actions -->
         <div class="additional-actions mb-5">

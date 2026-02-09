@@ -102,25 +102,27 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="d-flex gap-2 mt-auto">
-      <button class="btn btn-primary flex-grow-1"
-              (click)="addToCart()"
-              [disabled]="product.countInStock === 0"
-              [class.btn-success]="isInCart">
-        <!-- <i class="bi" [class.bi-cart-plus]="!isInCart" [class.bi-cart-check]="isInCart"></i> -->
-        <i class="fa-solid fa-cart-plus" *ngIf="!isInCart"></i>
-      <i class="fa-solid fa-cart-shopping" *ngIf="isInCart"></i>
+  <!-- Action Buttons -->
+<div class="d-flex gap-2 mt-auto">
+  <!-- Add to Cart Button -->
+  <button class="btn btn-primary flex-grow-1"
+          (click)="addToCart()"
+          [disabled]="product.countInStock === 0"
+          [class.btn-success]="isInCart">
+    <i class="fa-solid fa-cart-plus" *ngIf="!isInCart"></i>
+    <i class="fa-solid fa-cart-shopping" *ngIf="isInCart"></i>
+    {{ isInCart ? 'In Cart' : 'Add to Cart' }}
+  </button>
 
-        {{isInCart ? 'In Cart' : 'Add to Cart'}}
-      </button>
-      <button class="btn btn-outline-secondary"
-              (click)="compareProduct()"
-              title="Compare">
-        <!-- <i class="bi bi-arrow-left-right"></i> -->
-        <i class="fa-solid fa-right-left"></i>
+  <!-- Remove from Cart Button -->
+  <button *ngIf="isInCart"
+          class="btn btn-link text-danger p-0"
+          (click)="removeFromCart()"
+          title="Remove item">
+    <i class="fas fa-trash-alt"></i>
+  </button>
+</div>
 
-      </button>
-    </div>
   </div>
 
   <!-- Footer -->

@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Product } from '../../shared/interfaces/Product';
 import { CartService } from '../../cart/cart.service';
+import { CartItem } from '../../shared/interfaces/CartItem';
 
 @Component({
   selector: 'app-product-item',
@@ -32,7 +33,12 @@ this.cartService.cart$.subscribe(cart => {
     this.cartService.addItemToCart(this.product)
 
   }
-
+  // remove() {
+     
+  //     this.cartService.removeItem(this.product);
+  
+  //   }
+  
   // Toggle wishlist (logic to implement)
   toggleWishlist(): void {
     // Here you can implement your wishlist toggle logic
@@ -46,7 +52,20 @@ this.cartService.cart$.subscribe(cart => {
   }
 
   // Compare product placeholder
-  compareProduct(): void {
-    console.log('Compare product:', this.product);
-  }
+  // removeFromCart(): void {
+  //   console.log('Compare product:', this.product);
+  // }
+   removeFromCart(): void {
+  this.cartService.removeItem({
+    id: this.product.id,
+    productName: this.product.name,
+    price: this.product.price,
+    quantity: 1, // quantity doesn't matter here; service handles it
+    imageUrl: this.product.imageUrl,
+    brand: this.product.brand,
+    category: this.product.category
+  });
+
+  this.isInCart = false; // update UI immediately
+}
 }
